@@ -6,6 +6,7 @@ namespace ScriptableObjects
     [CreateAssetMenu(fileName = "New Song", menuName = "I Just Got A Smithy/Song")]
     public class Song : ScriptableObject
     {
+        [SerializeField] public WeaponType WeaponType;
         [SerializeField] public AudioClip Clip;
         [SerializeField] public float BPM;
         
