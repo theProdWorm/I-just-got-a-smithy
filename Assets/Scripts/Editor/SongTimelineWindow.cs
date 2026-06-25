@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Editor.SongTimeline
+namespace Editor
 {
     public class SongTimelineWindow : EditorWindow
     {
@@ -15,7 +15,7 @@ namespace Editor.SongTimeline
         private ScrollView _timelineView;
 
         private float _zoom;
-        private float _offset;
+        private float _scrollX;
         
         private AudioClip _clip;
 
@@ -54,7 +54,7 @@ namespace Editor.SongTimeline
             _listView.selectionChanged += OnSongSelectionChange;
             _listView.selectionChanged += (_) => { _selectedIndex = _listView.selectedIndex; };
             
-            if (allSongs.Count != 0)
+            if (allSongs.Count != 0 && _selectedIndex >= 0)
                 GenerateAudioTexture(allSongs[_selectedIndex]);
         }
 
@@ -76,11 +76,43 @@ namespace Editor.SongTimeline
             _listView.Rebuild();
         }
 
-        private void OnInspectorUpdate()
+        private void OnGUI()
         {
+            HandleInput(_timelineView.worldBound);
+        }
+        
+        private void HandleInput(Rect rect)
+        {
+            var e = Event.current;
+
+            if (!rect.Contains(e.mousePosition))
+                return;
             
+            Vector2 mousePos = e.mousePosition - new Vector2(rect.x, rect.y);
+            
+            switch (e.type)
+            {
+                case EventType.ScrollWheel:
+                    Zoom(rect, e, mousePos);
+                    break;
+            }
         }
 
+        private void Zoom(Rect rect, Event e, Vector2 mousePos)
+        {
+            float scrollDelta = e.delta.y;
+                    
+            float oldZoom = _zoom;
+            _zoom = Mathf.Clamp(_zoom * (1f - scrollDelta * 0.05f), 0.05f, 1f);
+            
+            float zoomDiff = Mathf.Abs(oldZoom - _zoom);
+            
+            float centerX = rect.center.x;
+            float centerDistanceNormalized = (mousePos.x - centerX) / centerX;
+            
+            
+        }
+        
         private void OnSongSelectionChange(IEnumerable<object> selectedItems)
         {
             _timelineView.Clear();
@@ -97,52 +129,7 @@ namespace Editor.SongTimeline
 
         private void GenerateAudioTexture(Song song)
         {
-            var backgroundColor = new Color(0.1568628f, 0.1568628f, 0.1568628f);
-            var waveformColor = new Color(0.7372549f, 0.7372549f, 0.7372549f);
-
-            var bounds = _timelineView.localBound;
-            var width = Mathf.FloorToInt(bounds.width);
-            var height = Mathf.FloorToInt(bounds.height);
-
-            _audioTexture = new Texture2D(width, height);
-            Color[] pixels = new Color[width * height];
-            for (int i = 0; i < pixels.Length; i++)
-                pixels[i] = backgroundColor;
-            
-            _audioTexture.SetPixels(pixels);
-            
-            var clip = song.Clip;
-            float[] samples = new float[clip.samples * clip.channels];
-            clip.GetData(samples, 0);
-            
-            int samplesPerPixel = Mathf.Max(1, samples.Length / width);
-            int centerY = height / 2;
-
-            for (int x = 0; x < width; x++)
-            {
-                int startSample = x * samplesPerPixel;
-
-                float maxAmplitude = 0f;
-
-                for (int i = 0; i < samplesPerPixel; i++)
-                {
-                    int sampleIndex = startSample + i;
-                    if (sampleIndex >= samples.Length)
-                        break;
-
-                    maxAmplitude = Mathf.Max(maxAmplitude, Mathf.Abs(samples[sampleIndex]));
-                }
-
-                int waveformHeight = Mathf.RoundToInt(maxAmplitude * centerY);
-                
-                for (int y = centerY - waveformHeight;
-                     y <= centerY + waveformHeight;
-                     y++)
-                {
-                    _audioTexture.SetPixel(x, y, waveformColor);
-                }
-            }
-            _audioTexture.Apply();
+            _audioTexture = WaveformGenerator.GenerateAudioTexture(song, _timelineView.localBound, _zoom, _scrollX);
             
             var sprite = Sprite.Create(_audioTexture, new Rect(0, 0, _audioTexture.width, _audioTexture.height), Vector2.zero);
             var spriteImage = new Image()
@@ -150,13 +137,8 @@ namespace Editor.SongTimeline
                 sprite = sprite,
                 scaleMode = ScaleMode.ScaleToFit
             };
-            
-            _timelineView.Add(spriteImage);
-        }
 
-        private void MouseOver()
-        {
-            
+            _timelineView.Add(spriteImage);
         }
     }
 }
