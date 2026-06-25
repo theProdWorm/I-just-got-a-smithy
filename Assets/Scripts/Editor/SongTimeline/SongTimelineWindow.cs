@@ -20,7 +20,8 @@ namespace Editor.SongTimeline
         private AudioClip _clip;
 
         private Texture2D _audioTexture;
-        
+        private ListView _listView;
+
         [MenuItem("Tools/Song Timeline")]
         public static void ShowSongTimeline()
         {
@@ -35,41 +36,44 @@ namespace Editor.SongTimeline
         {
             rootVisualElement.Clear();
             
-            var allSongGUIDs = AssetDatabase.FindAssets("t:Song");
-            var allObjects = (from GUID in allSongGUIDs
-                select AssetDatabase.LoadAssetAtPath<Song>(AssetDatabase.GUIDToAssetPath(GUID))).ToList();
-        
             var splitView = new TwoPaneSplitView(0, 250, TwoPaneSplitViewOrientation.Horizontal);
             rootVisualElement.Add(splitView);
 
-            var listView = new ListView();
-            splitView.Add(listView);
+            _listView = new ListView();
+            splitView.Add(_listView);
             _timelineView = new ScrollView(ScrollViewMode.Horizontal);
             splitView.Add(_timelineView);
-            
-            var button = new Button(() =>
-                {
-                    SongAssetCreatorWindow.ShowSongAssetCreator();
-                    CreateGUI();
-                })
-                { text = "+" };
-            listView.hierarchy.Add(button);
 
-            listView.makeItem = () => new Label();
-            listView.bindItem = (item, index) => { (item as Label)!.text = allObjects[index].name; };
-            listView.itemsSource = allObjects;
+            var allSongs = GetAllSongs();
             
-            listView.selectedIndex = _selectedIndex;
-            listView.selectionChanged += OnSongSelectionChange;
-            listView.selectionChanged += (_) => { _selectedIndex = listView.selectedIndex; };
+            _listView.makeItem = () => new Label();
+            _listView.bindItem = (item, index) => { (item as Label)!.text = GetAllSongs()[index].name; };
+            _listView.itemsSource = allSongs;
             
-            // if (allObjects.Count != 0)
-            //     GenerateAudioTexture(allObjects[Mathf.Max(_selectedIndex, 0)]);
+            _listView.selectedIndex = _selectedIndex;
+            _listView.selectionChanged += OnSongSelectionChange;
+            _listView.selectionChanged += (_) => { _selectedIndex = _listView.selectedIndex; };
+            
+            if (allSongs.Count != 0)
+                GenerateAudioTexture(allSongs[_selectedIndex]);
         }
 
+        private List<Song> GetAllSongs()
+        {
+            var allSongGUIDs = AssetDatabase.FindAssets("t:Song");
+            var allSongs = (from GUID in allSongGUIDs
+                select AssetDatabase.LoadAssetAtPath<Song>(AssetDatabase.GUIDToAssetPath(GUID))).ToList();
+
+            return allSongs;
+        }
+        
         private void OnFocus()
         {
-            CreateGUI();
+            if (_listView == null)
+                return;
+            
+            _listView.itemsSource = GetAllSongs();
+            _listView.Rebuild();
         }
 
         private void OnInspectorUpdate()
@@ -150,7 +154,7 @@ namespace Editor.SongTimeline
             _timelineView.Add(spriteImage);
         }
 
-        private void ShowTimeline()
+        private void MouseOver()
         {
             
         }
