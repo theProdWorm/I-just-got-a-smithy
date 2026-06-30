@@ -7,13 +7,13 @@ namespace Editor
 {
     public static class WaveformGenerator
     {
-        public static Texture2D GenerateAudioTexture(Song song, Rect bounds, float zoom, float scrollX)
+        public static Texture2D GenerateAudioTexture(Song song, Rect bounds, float scrollX, float zoom)
         {
             var backgroundColor = new Color(0.1568628f, 0.1568628f, 0.1568628f);
             // var waveformColor = new Color(0.7372549f, 0.7372549f, 0.7372549f);
 
             var width = Mathf.FloorToInt(bounds.width);
-            var height = Mathf.FloorToInt(bounds.height);
+            var height = 240;
             
             
 

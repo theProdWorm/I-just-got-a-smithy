@@ -12,7 +12,7 @@ namespace Editor
     public class SongTimelineWindow : EditorWindow
     {
         [SerializeField] private int _selectedIndex = -1;
-
+        
         private VisualElement _timelineView;
 
         private float _zoom = 1f;
@@ -24,7 +24,6 @@ namespace Editor
         
         private Song _song;
 
-        private Texture2D _timelineTexture;
         private ListView _listView;
 
         [MenuItem("Tools/Song Timeline")]
@@ -47,14 +46,7 @@ namespace Editor
             _listView = new ListView();
             leftRightSplitView.Add(_listView);
             
-            var upDownSplitView = new TwoPaneSplitView(1, 250, TwoPaneSplitViewOrientation.Vertical);
-            
-            _timelineView = new VisualElement();
-            upDownSplitView.Add(_timelineView);
-            
-            // _waveformView = new VisualElement();
-            // upDownSplitView.Add(_waveformView);
-
+            _timelineView = new ListView();
             leftRightSplitView.Add(_timelineView);
             
             var allSongs = GetAllSongs();
@@ -155,7 +147,7 @@ namespace Editor
         
         private void OnSongSelectionChange(IEnumerable<object> selectedItems)
         {
-            _timelineView.Clear();
+            _timelineView.hierarchy.Clear();
             
             var enumerator = selectedItems.GetEnumerator();
             if (enumerator.MoveNext())
@@ -172,34 +164,47 @@ namespace Editor
 
         private void GenerateAudioTexture(Song song)
         {
-            _timelineTexture = TimelineGenerator.GenerateTimeline(song, _timelineView.localBound, _scrollX, _zoom,
+            var beatTimelineTexture = TimelineGenerator.GenerateBeatTimeline(song, _timelineView.localBound, _scrollX, _zoom);
+            var beatTimelineSprite = Sprite.Create(beatTimelineTexture,
+                new Rect(0, 0, beatTimelineTexture.width, beatTimelineTexture.height), Vector2.zero);
+            var beatTimelineImage = new Image()
+            {
+                sprite = beatTimelineSprite,
+                scaleMode = ScaleMode.ScaleToFit
+            };
+            _timelineView.hierarchy.Add(beatTimelineImage);
+            
+            var timelineTexture = TimelineGenerator.GenerateTimeline(song, _timelineView.localBound, _scrollX, _zoom,
                 out var timestampsTexture);
 
-            var timelineSprite = Sprite.Create(_timelineTexture,
-                new Rect(0, 0, _timelineTexture.width, _timelineTexture.height), Vector2.zero);
+            var timelineSprite = Sprite.Create(timelineTexture,
+                new Rect(0, 0, timelineTexture.width, timelineTexture.height), Vector2.zero);
             var timelineImage = new Image()
             {
                 sprite = timelineSprite,
                 scaleMode = ScaleMode.ScaleToFit
             };
-            _timelineView.Add(timelineImage);
+            _timelineView.hierarchy.Add(timelineImage);
 
-            var timestampsSprite = Sprite.Create(_timelineTexture,
+            var timestampsSprite = Sprite.Create(timestampsTexture,
                 new Rect(0, 0, timestampsTexture.width, timestampsTexture.height), Vector2.zero);
 
-            var png = timestampsTexture.EncodeToPNG();
-            var path = @"C:\Users\emilr\Downloads\image.png";
-            if (!System.IO.File.Exists(path))
-                System.IO.File.Create(path).Close();
-            
-            System.IO.File.WriteAllBytes(path, png);
-            
             var timestampsImage = new Image()
             {
                 sprite = timestampsSprite,
                 scaleMode = ScaleMode.ScaleToFit
             };
-            _timelineView.Add(timestampsImage);
+            _timelineView.hierarchy.Add(timestampsImage);
+            
+            // var waveformTexture = WaveformGenerator.GenerateAudioTexture(song, _timelineView.localBound, _scrollX, _zoom);
+            // var waveformSprite = Sprite.Create(waveformTexture,
+            //     new Rect(0, 0, waveformTexture.width, waveformTexture.height), Vector2.zero);
+            // var waveformImage = new Image()
+            // {
+            //     sprite = waveformSprite,
+            //     scaleMode = ScaleMode.ScaleToFit
+            // };
+            // _timelineView.hierarchy.Add(waveformImage);
 
             // spriteImage.RegisterCallback<PointerDownEvent>(e =>
             // {
