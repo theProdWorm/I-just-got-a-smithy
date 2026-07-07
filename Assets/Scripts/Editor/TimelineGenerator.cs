@@ -12,6 +12,7 @@ namespace Editor
         private const int TEXT_SPRITE_HEIGHT = 16;
         private const int MAX_TIMESTAMPS = 10;
         private const int STEPS_BETWEEN_POINTS = 5;
+        private const int NUM_INPUTS = 4;
         
         private static readonly Dictionary<string, Sprite> TEXT_SPRITES = new();
 
@@ -20,7 +21,7 @@ namespace Editor
         public static Texture2D GenerateBeatTimeline(Song song, Rect rect, float scrollX, float zoom)
         {
             // Fill background
-            Texture2D beatTimelineTexture = new((int) rect.width, (int) (rect.height * 0.5f));
+            Texture2D beatTimelineTexture = new((int) rect.width, 300);
             Color[] pixels = new Color[beatTimelineTexture.width * beatTimelineTexture.height];
             for (int i = 0; i < pixels.Length; i++)
             {
@@ -67,9 +68,9 @@ namespace Editor
                 }
             }
 
-            for (int y = 0; y < 12; y++)
+            for (int y = 0; y < NUM_INPUTS * 3; y++)
             {
-                int yPos = beatTimelineTexture.height * (y % 4 + 1) / 5 + y / 4;
+                int yPos = beatTimelineTexture.height * (y % NUM_INPUTS + 1) / (NUM_INPUTS + 1) + y / NUM_INPUTS;
                 
                 for (int x = 0; x < pixelWidth; x++)
                 {
