@@ -14,6 +14,8 @@ namespace Editor
 {
     public class SongTimelineWindow : EditorWindow
     {
+        private const int BEAT_RESOLUTION = 16;
+        
         [SerializeField] private int _selectedIndex = -1;
         
         private VisualElement _timelineView;
@@ -32,7 +34,7 @@ namespace Editor
                 if (_scrollX < 0)
                     _scrollX = 0;
                 else if (_scrollX + _zoom > 1f)
-                    _scrollX -= _scrollX + _zoom - 1;
+                    _scrollX = 1 - _zoom;
             }
         }
 
@@ -82,7 +84,7 @@ namespace Editor
             _songListView.selectionChanged += OnSongSelectionChange;
             _songListView.selectionChanged += (_) => { _selectedIndex = _songListView.selectedIndex; };
             
-            _timelineView.RegisterCallback<GeometryChangedEvent>(_ => GenerateAudioTexture());
+            _timelineView.RegisterCallback<GeometryChangedEvent>(_ => Draw());
             _timelineView.RegisterCallback<WheelEvent>(HandleScrollInput);
             _timelineView.RegisterCallback<MouseDownEvent>(HandleMouseDownInput);
             _timelineView.RegisterCallback<MouseUpEvent>(HandleMouseUpInput);
@@ -102,6 +104,40 @@ namespace Editor
             
             _songListView.itemsSource = GetAllSongs();
             _songListView.Rebuild();
+        }
+
+        private void OnGUI()
+        {
+            float songLength = _song.Clip.length;
+            float playheadTime = _normalizedPlayheadPosition * songLength;
+            
+            float startTime = songLength * ScrollX;
+            float endTime = startTime + songLength * _zoom;
+            if (_playingMusic)
+            {
+                playheadTime = _audioSource.time;
+
+                if (_playingMusic && (playheadTime < startTime ||
+                                      (ScrollX + _zoom < 1f && playheadTime > startTime + (endTime - startTime) / 2)))
+                {
+                    ScrollX = playheadTime / songLength;
+                    Draw();
+                }
+
+                Repaint();
+            }
+            
+            var timelineRect = _timelineView.localBound;
+            int x = TimelineUtils.GetXPosition(playheadTime, startTime, endTime, (int) timelineRect.width);
+            
+            if (x > 0 && x < timelineRect.width)
+                EditorGUI.DrawRect(new Rect(timelineRect.x + x, timelineRect.y, 2, timelineRect.height), Color.dodgerBlue);
+        }
+
+        private void OnInspectorUpdate()
+        {
+            if (!Application.isPlaying)
+                _playingMusic = false;
         }
 
         private List<Song> GetAllSongs()
@@ -186,7 +222,7 @@ namespace Editor
 
             ScrollX += centerDistanceNormalized * zoomDiff;
             
-            GenerateAudioTexture();
+            Draw();
         }
 
         private void Pan(WheelEvent e)
@@ -195,7 +231,7 @@ namespace Editor
 
             ScrollX += scrollDelta * 0.1f * _zoom;
             
-            GenerateAudioTexture();
+            Draw();
         }
 
         private void Pan(MouseMoveEvent e)
@@ -207,7 +243,7 @@ namespace Editor
             
             ScrollX -= normalizedMouseXDelta * _zoom;
             
-            GenerateAudioTexture();
+            Draw();
         }
         
         private void SetPlayheadPosition(float mousePosX)
@@ -216,15 +252,18 @@ namespace Editor
             
             float normalizedMousePos = (mousePosX - rect.x) / rect.width;
             
-            _normalizedPlayheadPosition = _scrollX + normalizedMousePos * _zoom;
+            _normalizedPlayheadPosition = SnapToBeat(ScrollX + normalizedMousePos * _zoom);
 
-            if (_audioSource)
+            if (_audioSource && _audioSource.clip)
                 _audioSource.time = _normalizedPlayheadPosition * _song.Clip.length;
+            
+            Repaint();
         }
 
         private void ResetPlayback()
         {
             _normalizedPlayheadPosition = 0;
+            _playingMusic = false;
             _audioSource.Stop();
         }
         
@@ -258,6 +297,14 @@ namespace Editor
         {
             
         }
+
+        private float SnapToBeat(float value)
+        {
+            int totalBeats = Mathf.FloorToInt(BEAT_RESOLUTION * _song.BPM / 60f * _song.Clip.length);
+            int beatSnap = Mathf.RoundToInt(value * totalBeats);
+            
+            return beatSnap / (float) totalBeats;
+        }
         
         private void OnSongSelectionChange(IEnumerable<object> selectedItems)
         {
@@ -270,19 +317,20 @@ namespace Editor
                 if (selectedSong != null)
                 {
                     _song = selectedSong;
-                    GenerateAudioTexture();
+                    Draw();
                 }
             }
             enumerator.Dispose();
         }
 
-        private void GenerateAudioTexture()
+        private void Draw()
         {
             if (_timelineView.localBound.width <= 0)
                 return;
             
             _timelineView.hierarchy.Clear();
             
+            // Generate beat timeline
             var beatTimelineTexture = TimelineGenerator.GenerateBeatTimeline(_song, _timelineView.localBound, ScrollX, _zoom);
             var beatTimelineSprite = Sprite.Create(beatTimelineTexture,
                 new Rect(0, 0, beatTimelineTexture.width, beatTimelineTexture.height), Vector2.zero);
@@ -293,6 +341,7 @@ namespace Editor
             };
             _timelineView.hierarchy.Add(beatTimelineImage);
             
+            // Generate timeline
             var timelineTexture = TimelineGenerator.GenerateTimeline(_song, _timelineView.localBound, ScrollX, _zoom,
                 out var timestampsTexture);
 
@@ -305,6 +354,7 @@ namespace Editor
             };
             _timelineView.hierarchy.Add(timelineImage);
 
+            // Generate timestamps
             var timestampsSprite = Sprite.Create(timestampsTexture,
                 new Rect(0, 0, timestampsTexture.width, timestampsTexture.height), Vector2.zero);
 
@@ -314,7 +364,7 @@ namespace Editor
                 scaleMode = ScaleMode.ScaleToFit
             };
             _timelineView.hierarchy.Add(timestampsImage);
-
+            
             var songInfo = GetSongData();
             while (songInfo.MoveNext())
             {

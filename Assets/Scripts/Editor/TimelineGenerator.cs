@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,8 +11,10 @@ namespace Editor
     public static class TimelineGenerator
     {
         private const int TEXT_SPRITE_HEIGHT = 16;
-        private const int MAX_TIMESTAMPS = 10;
-        private const int STEPS_BETWEEN_POINTS = 5;
+        private const int STEPS_BETWEEN_SECONDS = 5;
+        private const int PARTS_PER_BEAT = 16;
+        private const int MINIMUM_BEAT_DISTANCE = 20;
+        private const int MINIMUM_SECOND_DISTANCE = 56;
         private const int NUM_INPUTS = 4;
         
         private static readonly Dictionary<string, Sprite> TEXT_SPRITES = new();
@@ -35,44 +38,71 @@ namespace Editor
             float startTime = songLength * scrollX;
             float endTime = startTime + songLength * zoom;
 
-            // Total widths
-            float timeWidth = endTime - startTime;
-            int pixelWidth = Mathf.FloorToInt(rect.width);
+            int width = Mathf.FloorToInt(rect.width);
 
-            // Starting points
-            int firstBeat = Mathf.FloorToInt(bps * startTime);
-            float firstBeatTime = firstBeat / bps;
-            int firstBeatXPos = Mathf.FloorToInt(pixelWidth * (firstBeatTime - startTime) / timeWidth);
-            
-            // Intervals
-            float beatTimeDistance = 1 / bps;
-            int beatPixelDistance = Mathf.CeilToInt(pixelWidth * (beatTimeDistance / timeWidth));
-            int beatsOnScreen = Mathf.FloorToInt(timeWidth * bps);
-
-            int maxBeats = (int) rect.width / 20;
-            
-            // Find maximum amount of beats to display
-            int numBeats = beatsOnScreen;
-            int n = 1;
-            while (numBeats > maxBeats)
-                numBeats = Mathf.CeilToInt(beatsOnScreen / (float) ++n);
-
-            // Vertical lines
-            for (int i = 0; i < numBeats; i++)
+            List<int> fullBeatPositions = TimelineUtils.GetAllPositions(x => x / bps, bps * songLength, startTime,
+                endTime, width, MINIMUM_BEAT_DISTANCE, out _);
+            foreach (var x in fullBeatPositions)
             {
-                int x = firstBeatXPos + i * n * beatPixelDistance;
-
                 for (int y = 0; y < beatTimelineTexture.height; y++)
                 {
-                    beatTimelineTexture.SetPixel(x, y, Color.gray3);
+                    beatTimelineTexture.SetPixel(x, y, Color.gray);
                 }
             }
+            
+            int beatDistance = fullBeatPositions.Count == 1 ? 1000 : fullBeatPositions[1] - fullBeatPositions[0];
+            int numParts = beatDistance / 16;
+            int n = 0;
+            while (numParts != 1)
+            {
+                numParts >>= 1;
+                n++;
+            }
+            numParts <<= Mathf.Min(n, (int) Mathf.Log(PARTS_PER_BEAT, 2));
 
+            List<int> partBeatPositions = TimelineUtils.GetAllPositions(x => x / bps / numParts,
+                bps * songLength * numParts, startTime, endTime, width, 1, out _);
+
+            int offset = 0;
+            foreach (var pos in partBeatPositions)
+            {
+                if (fullBeatPositions.Contains(pos))
+                    break;
+
+                offset++;
+            }
+
+            for (int i = 0; i < partBeatPositions.Count; i++)
+            {
+                int offsetI = Mathf.Abs(i - offset);
+                
+                if (offsetI % numParts == 0)
+                    continue;
+
+                int sizeCut = 0;
+
+                if (offsetI % (numParts / 2) == 0) // Half
+                    sizeCut = 10;
+                else if (offsetI % (numParts / 4) == 0) // Quarter
+                    sizeCut = 20;
+                else if (offsetI % (numParts / 8) == 0) // Eighth
+                    sizeCut = 30;
+                else if (offsetI % (numParts / 16) == 0) // Sixteenth
+                    sizeCut = 40;
+
+                int x = partBeatPositions[i];
+                for (int y = sizeCut; y < beatTimelineTexture.height - sizeCut; y++)
+                {
+                    beatTimelineTexture.SetPixel(x, y, Color.gray2);
+                }
+            }
+            
+            // Horizontal (input) lines
             for (int y = 0; y < NUM_INPUTS * 3; y++)
             {
                 int yPos = beatTimelineTexture.height * (y % NUM_INPUTS + 1) / (NUM_INPUTS + 1) + y / NUM_INPUTS;
                 
-                for (int x = 0; x < pixelWidth; x++)
+                for (int x = 0; x < width; x++)
                 {
                     beatTimelineTexture.SetPixel(x, yPos, Color.white);
                 }
@@ -118,43 +148,31 @@ namespace Editor
             float endTime = startTime + songLength * zoom;
 
             // Total widths
-            float timeWidth = endTime - startTime;
-            int pixelWidth = Mathf.FloorToInt(rect.width);
+            int width = Mathf.FloorToInt(rect.width);
 
-            // Intervals
-            float timestampTimeDistance = Mathf.Max(timeWidth / MAX_TIMESTAMPS, 1);
-            int timestampPixelDistance = Mathf.FloorToInt(pixelWidth * timestampTimeDistance / timeWidth);
-
-            // Starting points
-            int firstTimestampTime = Mathf.CeilToInt(startTime);
-            int firstTimestampPixel = Mathf.FloorToInt(pixelWidth * (firstTimestampTime - startTime) / timeWidth);
-
-            int smallStepDistance = timestampPixelDistance / (STEPS_BETWEEN_POINTS + 1);
-            
-            int numPoints = Mathf.Min(MAX_TIMESTAMPS, Mathf.FloorToInt(timeWidth));
-            
-            for (int i = 0; i < numPoints; i++)
+            var stepPositions = TimelineUtils.GetAllPositions(x => (float) x / (STEPS_BETWEEN_SECONDS + 1),
+                songLength * (STEPS_BETWEEN_SECONDS + 1), startTime, endTime, width,
+                1, out _);
+            foreach (var x in stepPositions)
             {
-                int time = Mathf.FloorToInt(firstTimestampTime + i * timestampTimeDistance);
-                int x = firstTimestampPixel + i * timestampPixelDistance;
-
-                // Small steps
-                for (int j = 0; j < STEPS_BETWEEN_POINTS; j++)
+                for (int y = 10; y < timelineTexture.height; y++)
                 {
-                    int xPos = x + (j + 1) * smallStepDistance;
-
-                    for (int y = 10; y < timelineTexture.height; y++)
-                    {
-                        timelineTexture.SetPixel(xPos, y, Color.gray3);
-                    }
+                    timelineTexture.SetPixel(x, y, Color.gray3);
                 }
+            }
+            
+            var secondPositions = TimelineUtils.GetAllPositions(x => x, songLength, startTime, endTime, width, 
+                MINIMUM_SECOND_DISTANCE, out var times);
+            for (int i = 0; i < secondPositions.Count; i++)
+            {
+                int x = secondPositions[i];
+                int time = Mathf.FloorToInt(times[i]);
                 
-                // Big steps
                 for (int y = 0; y < timelineTexture.height; y++)
                 {
-                    timelineTexture.SetPixel(x, y, Color.white);
+                    timelineTexture.SetPixel(x, y, Color.gray3);
                 }
-
+                
                 AddTimestamp(time, x);
             }
             
@@ -191,11 +209,8 @@ namespace Editor
             }
 
             int halfWidth = totalWidth / 2;
-            int startX = xPos - halfWidth;
+            int startX = Mathf.Clamp(xPos - halfWidth, 0, TIMESTAMPS_TEXTURE.width - totalWidth);
             
-            // Offset from the far left of the texture
-            int firstOffset = startX < 0 ? Mathf.Abs(startX) : 0;
-
             // Combine sprites into one texture
             foreach (var sprite in sprites)
             {
@@ -208,7 +223,7 @@ namespace Editor
                     for (int y = 0; y < TEXT_SPRITE_HEIGHT; y++)
                     {
                         int index = x + y * width;
-                        int finalXPos = startX + x + firstOffset;
+                        int finalXPos = startX + x;
                         
                         var pixel = pixels[index];
                         var backgroundPixel = TIMESTAMPS_TEXTURE.GetPixel(finalXPos, y);
