@@ -15,8 +15,6 @@ namespace Editor
             var width = Mathf.FloorToInt(bounds.width);
             var height = 240;
             
-            
-
             var audioTexture = new Texture2D(width, height);
             Color[] pixels = new Color[width * height];
             for (int i = 0; i < pixels.Length; i++)

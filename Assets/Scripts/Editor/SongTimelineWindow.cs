@@ -353,30 +353,56 @@ namespace Editor
             var rect = _timelineView.localBound;
             var beatTimelineRect = new Rect(rect.x, rect.y, rect.width, 300);
 
-            if (!beatTimelineRect.Contains(e.mousePosition))
+            Vector2 pos = e.mousePosition;
+            float beatTime;
+            int lane;
+
+            if (e.modifiers == EventModifiers.Control)
+            {
+                float playheadTime = _normalizedPlayheadPosition * _song.Clip.length;
+                
+                float startTime = ScrollX * _song.Clip.length;
+                float endTime = startTime + _song.Clip.length * _zoom;
+
+                if (playheadTime < startTime || playheadTime > endTime)
+                    return;
+                
+                pos = new Vector2(ScrollX + _normalizedPlayheadPosition * _zoom, pos.y);
+                GetNotePosition(pos, beatTimelineRect, out _, out lane);
+                beatTime = TimelineUtils.SnapToBeat(_normalizedPlayheadPosition * _song.Clip.length, _song, beatTimelineRect, ScrollX, _zoom);
+            }
+            else if (!beatTimelineRect.Contains(e.mousePosition))
                 return;
-            
-            GetNotePosition(e.mousePosition, beatTimelineRect, out var beatTime, out var lane);
+            else
+                GetNotePosition(pos, beatTimelineRect, out beatTime, out lane);
             
             var existingNote = _song.Notes.FirstOrDefault(n => Mathf.Approximately(n.Time, beatTime) && n.Lane == lane);
-            if (existingNote == null)
+
+            if (e.modifiers == EventModifiers.Shift)
             {
-                Debug.Log("Creating note at " + beatTime + ", lane " + lane);
-                
-                var note = new Note(beatTime, lane);
-                _song.Notes.Add(note);
-                _heldNote = note;
+                if (existingNote != null)
+                    _song.Notes.Remove(existingNote);
             }
             else
             {
-                Debug.Log("Editing note at " + beatTime + ", lane " + lane);
-                
-                _heldNote = existingNote;
+                if (existingNote == null)
+                {
+                    var note = new Note(beatTime, lane);
+                    _song.Notes.Add(note);
+                    _heldNote = note;
+                }
+                else
+                {
+                    _heldNote = existingNote;
+                }
             }
         }
 
         private void MoveHeldNote(MouseMoveEvent e)
         {
+            if (e.modifiers != EventModifiers.None)
+                return;
+            
             var rect = _timelineView.localBound;
             var beatTimelineRect = new Rect(rect.x, rect.y, rect.width, 300);
 
