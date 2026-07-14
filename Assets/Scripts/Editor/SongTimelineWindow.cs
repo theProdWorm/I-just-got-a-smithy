@@ -14,13 +14,13 @@ namespace Editor
 {
     public class SongTimelineWindow : EditorWindow
     {
-        private const int BEAT_RESOLUTION = 16;
-        
         [SerializeField] private int _selectedIndex = -1;
         
         private VisualElement _timelineView;
         private ListView _songListView;
 
+        private Texture2D _beatTimelineTexture;
+        
         private float _zoom = 1f;
         private float _scrollX;
 
@@ -49,6 +49,8 @@ namespace Editor
         private Song _song;
         
         private AudioSource _audioSource;
+
+        private Note _heldNote;
 
         [MenuItem("Tools/Song Timeline")]
         public static void Open()
@@ -84,7 +86,10 @@ namespace Editor
             _songListView.selectionChanged += OnSongSelectionChange;
             _songListView.selectionChanged += (_) => { _selectedIndex = _songListView.selectedIndex; };
             
-            _timelineView.RegisterCallback<GeometryChangedEvent>(_ => Draw());
+            // _timelineView.RegisterCallback<GeometryChangedEvent>(_ =>
+            // {
+            //     Draw();
+            // });
             _timelineView.RegisterCallback<WheelEvent>(HandleScrollInput);
             _timelineView.RegisterCallback<MouseDownEvent>(HandleMouseDownInput);
             _timelineView.RegisterCallback<MouseUpEvent>(HandleMouseUpInput);
@@ -108,11 +113,29 @@ namespace Editor
 
         private void OnGUI()
         {
+            var rect = _timelineView.localBound;
+
+            var beatTimelineRect = new Rect(rect.x, rect.y, rect.width, 300);
+            TimelineGenerator.DrawBeatTimeline(_song, beatTimelineRect, ScrollX, _zoom);
+            
+            var timelineRect = new Rect(rect.x, beatTimelineRect.yMax, _timelineView.localBound.width, 32);
+            TimelineGenerator.DrawTimeline(_song, timelineRect, ScrollX, _zoom);
+            
+            DrawNotes();
+            DrawPlayhead();
+            
+            Repaint();
+        }
+
+        private void DrawPlayhead()
+        {
             float songLength = _song.Clip.length;
-            float playheadTime = _normalizedPlayheadPosition * songLength;
             
             float startTime = songLength * ScrollX;
             float endTime = startTime + songLength * _zoom;
+
+            float playheadTime = _normalizedPlayheadPosition * songLength;
+            
             if (_playingMusic)
             {
                 playheadTime = _audioSource.time;
@@ -121,7 +144,6 @@ namespace Editor
                                       (ScrollX + _zoom < 1f && playheadTime > startTime + (endTime - startTime) / 2)))
                 {
                     ScrollX = playheadTime / songLength;
-                    Draw();
                 }
 
                 Repaint();
@@ -132,6 +154,44 @@ namespace Editor
             
             if (x > 0 && x < timelineRect.width)
                 EditorGUI.DrawRect(new Rect(timelineRect.x + x, timelineRect.y, 2, timelineRect.height), Color.dodgerBlue);
+        }
+
+        private void DrawNotes()
+        {
+            float songLength = _song.Clip.length;
+            
+            float startTime = songLength * ScrollX;
+            float endTime = startTime + songLength * _zoom;
+
+            var rect = _timelineView.localBound;
+            int width = Mathf.FloorToInt(rect.width);
+
+            const int numInputs = TimelineUtils.NUM_INPUTS;
+
+            const int noteSize = 16;
+            const int halfNoteSize = noteSize / 2;
+            
+            foreach (var note in _song.Notes.Where(n => n.Time >= startTime && n.Time < endTime))
+            {
+                int x = TimelineUtils.GetXPosition(note.Time, startTime, endTime, width);
+                
+                if (x < halfNoteSize || x > width - halfNoteSize)
+                    continue;
+
+                int y = note.Lane;
+                int yPos = _beatTimelineTexture.height * (y + 1) / (numInputs + 1) + y / numInputs - halfNoteSize;
+
+                var color = y switch
+                {
+                    0 => Color.red,
+                    1 => Color.green,
+                    2 => Color.blue,
+                    3 => Color.yellow,
+                    _ => Color.saddleBrown
+                };
+
+                EditorGUI.DrawRect(new Rect(rect.x + x - halfNoteSize, rect.y + yPos, noteSize, noteSize), color);
+            }
         }
 
         private void OnInspectorUpdate()
@@ -167,6 +227,7 @@ namespace Editor
                     break;
                 case 1:
                     _rmbDown = true;
+                    HandleRightClickDown(e);
                     break;
                 case 2:
                     _mmbDown = true;
@@ -201,7 +262,7 @@ namespace Editor
             if (_lmbDown)
                 SetPlayheadPosition(e.mousePosition.x);
             else if (_rmbDown)
-            {}
+                MoveHeldNote(e);
             else if (_mmbDown)
                 Pan(e);
         }
@@ -213,16 +274,13 @@ namespace Editor
             float scrollDelta = e.delta.y;
             
             float oldZoom = _zoom;
-            _zoom = Mathf.Clamp(_zoom * (1f + scrollDelta * 0.05f), 0.02f, 1f);
+            _zoom = Mathf.Clamp(_zoom * (1f + scrollDelta * 0.05f), 1f / _song.Clip.length, 1f);
             
             float zoomDiff = oldZoom - _zoom;
             
-            float centerX = rect.center.x;
-            float centerDistanceNormalized = (mousePos.x - centerX) / rect.width * 2f;
-
-            ScrollX += centerDistanceNormalized * zoomDiff;
+            float normalizedMousePos = (mousePos.x - rect.x) / rect.width;
             
-            Draw();
+            ScrollX += normalizedMousePos * zoomDiff;
         }
 
         private void Pan(WheelEvent e)
@@ -230,8 +288,6 @@ namespace Editor
             float scrollDelta = e.delta.x;
 
             ScrollX += scrollDelta * 0.1f * _zoom;
-            
-            Draw();
         }
 
         private void Pan(MouseMoveEvent e)
@@ -242,17 +298,16 @@ namespace Editor
             float normalizedMouseXDelta = mouseXDelta / rect.width;
             
             ScrollX -= normalizedMouseXDelta * _zoom;
-            
-            Draw();
         }
         
         private void SetPlayheadPosition(float mousePosX)
         {
             var rect = _timelineView.worldBound;
-            
             float normalizedMousePos = (mousePosX - rect.x) / rect.width;
-            
-            _normalizedPlayheadPosition = SnapToBeat(ScrollX + normalizedMousePos * _zoom);
+            float normalizedMouseTime = ScrollX + normalizedMousePos * _zoom;
+            float mouseTime = normalizedMouseTime * _song.Clip.length;
+
+            _normalizedPlayheadPosition = TimelineUtils.SnapToBeat(mouseTime, _song, rect, ScrollX, _zoom) / _song.Clip.length;
 
             if (_audioSource && _audioSource.clip)
                 _audioSource.time = _normalizedPlayheadPosition * _song.Clip.length;
@@ -293,22 +348,66 @@ namespace Editor
             }
         }
         
-        private void HandleRightClick()
+        private void HandleRightClickDown(MouseDownEvent e)
         {
+            var rect = _timelineView.localBound;
+            var beatTimelineRect = new Rect(rect.x, rect.y, rect.width, 300);
+
+            if (!beatTimelineRect.Contains(e.mousePosition))
+                return;
             
+            GetNotePosition(e.mousePosition, beatTimelineRect, out var beatTime, out var lane);
+            
+            var existingNote = _song.Notes.FirstOrDefault(n => Mathf.Approximately(n.Time, beatTime) && n.Lane == lane);
+            if (existingNote == null)
+            {
+                Debug.Log("Creating note at " + beatTime + ", lane " + lane);
+                
+                var note = new Note(beatTime, lane);
+                _song.Notes.Add(note);
+                _heldNote = note;
+            }
+            else
+            {
+                Debug.Log("Editing note at " + beatTime + ", lane " + lane);
+                
+                _heldNote = existingNote;
+            }
         }
 
-        private float SnapToBeat(float value)
+        private void MoveHeldNote(MouseMoveEvent e)
         {
-            int totalBeats = Mathf.FloorToInt(BEAT_RESOLUTION * _song.BPM / 60f * _song.Clip.length);
-            int beatSnap = Mathf.RoundToInt(value * totalBeats);
+            var rect = _timelineView.localBound;
+            var beatTimelineRect = new Rect(rect.x, rect.y, rect.width, 300);
+
+            if (!beatTimelineRect.Contains(e.mousePosition))
+                return;
             
-            return beatSnap / (float) totalBeats;
+            GetNotePosition(e.mousePosition, beatTimelineRect, out var beatTime, out var lane);
+            
+            _heldNote.Time = beatTime;
+            _heldNote.Lane = lane;
+        }
+
+        private void GetNotePosition(Vector2 mousePosition, Rect beatTimelineRect, out float beatTime, out int lane)
+        {
+            float normalizedMousePosX = (mousePosition.x - beatTimelineRect.x) / beatTimelineRect.width;
+            float normalizedMousePosY = (mousePosition.y - beatTimelineRect.y) / beatTimelineRect.height;
+
+            float normalizedMouseTime = ScrollX + normalizedMousePosX * _zoom;
+            float mouseTime = normalizedMouseTime * _song.Clip.length;
+            beatTime = TimelineUtils.SnapToBeat(mouseTime, _song, beatTimelineRect, ScrollX, _zoom);
+
+            int numInputs = TimelineUtils.NUM_INPUTS;
+            lane = Mathf.Clamp(Mathf.RoundToInt((normalizedMousePosY - 3f / ((numInputs + 1) * 2)) * (numInputs + 1)), 0, numInputs - 1);
         }
         
         private void OnSongSelectionChange(IEnumerable<object> selectedItems)
         {
             _timelineView.hierarchy.Clear();
+            
+            _zoom = 1;
+            ScrollX = 0;
             
             var enumerator = selectedItems.GetEnumerator();
             if (enumerator.MoveNext())
@@ -317,60 +416,9 @@ namespace Editor
                 if (selectedSong != null)
                 {
                     _song = selectedSong;
-                    Draw();
                 }
             }
             enumerator.Dispose();
-        }
-
-        private void Draw()
-        {
-            if (_timelineView.localBound.width <= 0)
-                return;
-            
-            _timelineView.hierarchy.Clear();
-            
-            // Generate beat timeline
-            var beatTimelineTexture = TimelineGenerator.GenerateBeatTimeline(_song, _timelineView.localBound, ScrollX, _zoom);
-            var beatTimelineSprite = Sprite.Create(beatTimelineTexture,
-                new Rect(0, 0, beatTimelineTexture.width, beatTimelineTexture.height), Vector2.zero);
-            var beatTimelineImage = new Image()
-            {
-                sprite = beatTimelineSprite,
-                scaleMode = ScaleMode.ScaleToFit
-            };
-            _timelineView.hierarchy.Add(beatTimelineImage);
-            
-            // Generate timeline
-            var timelineTexture = TimelineGenerator.GenerateTimeline(_song, _timelineView.localBound, ScrollX, _zoom,
-                out var timestampsTexture);
-
-            var timelineSprite = Sprite.Create(timelineTexture,
-                new Rect(0, 0, timelineTexture.width, timelineTexture.height), Vector2.zero);
-            var timelineImage = new Image()
-            {
-                sprite = timelineSprite,
-                scaleMode = ScaleMode.ScaleToFit
-            };
-            _timelineView.hierarchy.Add(timelineImage);
-
-            // Generate timestamps
-            var timestampsSprite = Sprite.Create(timestampsTexture,
-                new Rect(0, 0, timestampsTexture.width, timestampsTexture.height), Vector2.zero);
-
-            var timestampsImage = new Image()
-            {
-                sprite = timestampsSprite,
-                scaleMode = ScaleMode.ScaleToFit
-            };
-            _timelineView.hierarchy.Add(timestampsImage);
-            
-            var songInfo = GetSongData();
-            while (songInfo.MoveNext())
-            {
-                var label = songInfo.Current;
-                _timelineView.hierarchy.Add(label);
-            }
         }
 
         private IEnumerator<Label> GetSongData()

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d65ac9b29d91453dbf40f7c21e189d33, type: 3}
+  m_Name: Electro Swing
+  m_EditorClassIdentifier: IJustGotASmithy.ScriptableObjects::ScriptableObjects.Song
+  Clip: {fileID: 8300000, guid: a995a6fc20aa69a40a72aec1185b5348, type: 3}
+  BPM: 120
+  Notes: []

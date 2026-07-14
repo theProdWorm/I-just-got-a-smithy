@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ScriptableObjects;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -10,27 +11,15 @@ namespace Editor
 {
     public static class TimelineGenerator
     {
-        private const int TEXT_SPRITE_HEIGHT = 16;
+        private const int FONT_HEIGHT = 16;
+        private const int FONT_WIDTH = 8;
         private const int STEPS_BETWEEN_SECONDS = 5;
-        private const int PARTS_PER_BEAT = 16;
-        private const int MINIMUM_BEAT_DISTANCE = 20;
         private const int MINIMUM_SECOND_DISTANCE = 56;
-        private const int NUM_INPUTS = 4;
         
-        private static readonly Dictionary<string, Sprite> TEXT_SPRITES = new();
-
-        private static Texture2D TIMESTAMPS_TEXTURE;
-
-        public static Texture2D GenerateBeatTimeline(Song song, Rect rect, float scrollX, float zoom)
+        public static void DrawBeatTimeline(Song song, Rect rect, float scrollX, float zoom)
         {
             // Fill background
-            Texture2D beatTimelineTexture = new((int) rect.width, 300);
-            Color[] pixels = new Color[beatTimelineTexture.width * beatTimelineTexture.height];
-            for (int i = 0; i < pixels.Length; i++)
-            {
-                pixels[i] = Color.black;
-            }
-            beatTimelineTexture.SetPixels(pixels);
+            EditorGUI.DrawRect(rect, Color.black);
             
             float bps = song.BPM / 60.0f; // Beats per second
             float songLength = song.Clip.length;
@@ -40,28 +29,9 @@ namespace Editor
 
             int width = Mathf.FloorToInt(rect.width);
 
-            List<int> fullBeatPositions = TimelineUtils.GetAllPositions(x => x / bps, bps * songLength, startTime,
-                endTime, width, MINIMUM_BEAT_DISTANCE, out _);
-            foreach (var x in fullBeatPositions)
-            {
-                for (int y = 0; y < beatTimelineTexture.height; y++)
-                {
-                    beatTimelineTexture.SetPixel(x, y, Color.gray);
-                }
-            }
-            
-            int beatDistance = fullBeatPositions.Count == 1 ? 1000 : fullBeatPositions[1] - fullBeatPositions[0];
-            int numParts = beatDistance / 16;
-            int n = 0;
-            while (numParts != 1)
-            {
-                numParts >>= 1;
-                n++;
-            }
-            numParts <<= Mathf.Min(n, (int) Mathf.Log(PARTS_PER_BEAT, 2));
-
+            int numParts = TimelineUtils.GetBeatResolution(song, rect, scrollX, zoom, out var fullBeatPositions);
             List<int> partBeatPositions = TimelineUtils.GetAllPositions(x => x / bps / numParts,
-                bps * songLength * numParts, startTime, endTime, width, 1, out _);
+                bps * songLength * numParts, startTime, endTime, width, numParts > 1 ? 1 : TimelineUtils.MINIMUM_BEAT_DISTANCE, out _, out _);
 
             int offset = 0;
             foreach (var pos in partBeatPositions)
@@ -72,184 +42,96 @@ namespace Editor
                 offset++;
             }
 
-            for (int i = 0; i < partBeatPositions.Count; i++)
+            for (int i = 0; numParts > 0 && i < partBeatPositions.Count; i++)
             {
                 int offsetI = Mathf.Abs(i - offset);
-                
-                if (offsetI % numParts == 0)
-                    continue;
 
+                var color = Color.gray;
                 int sizeCut = 0;
 
-                if (offsetI % (numParts / 2) == 0) // Half
-                    sizeCut = 10;
-                else if (offsetI % (numParts / 4) == 0) // Quarter
-                    sizeCut = 20;
-                else if (offsetI % (numParts / 8) == 0) // Eighth
-                    sizeCut = 30;
-                else if (offsetI % (numParts / 16) == 0) // Sixteenth
-                    sizeCut = 40;
-
-                int x = partBeatPositions[i];
-                for (int y = sizeCut; y < beatTimelineTexture.height - sizeCut; y++)
+                int n = numParts;
+                while (offsetI % n != 0)
                 {
-                    beatTimelineTexture.SetPixel(x, y, Color.gray2);
+                    sizeCut += 10;
+                    n /= 2;
+                    
+                    color = Color.gray2;
                 }
-            }
-            
-            // Horizontal (input) lines
-            for (int y = 0; y < NUM_INPUTS * 3; y++)
-            {
-                int yPos = beatTimelineTexture.height * (y % NUM_INPUTS + 1) / (NUM_INPUTS + 1) + y / NUM_INPUTS;
                 
-                for (int x = 0; x < width; x++)
-                {
-                    beatTimelineTexture.SetPixel(x, yPos, Color.white);
-                }
+                int x = partBeatPositions[i];
+                Rect line = new Rect(rect.x + x, rect.y + sizeCut, 1, rect.height - sizeCut * 2);
+                EditorGUI.DrawRect(line, color);
             }
 
-            // Divider line
-            for (int x = 0; x < beatTimelineTexture.width; x++)
+            int numInputs = TimelineUtils.NUM_INPUTS;
+            // Horizontal (input) lines
+            for (int y = 0; y < numInputs; y++)
             {
-                beatTimelineTexture.SetPixel(x, 0, Color.white);
+                int yPos = (int) rect.height * (y + 1) / (numInputs + 1) + y / numInputs;
+                
+                Rect line = new Rect(rect.x, rect.y + yPos - 1, width, 3);
+                EditorGUI.DrawRect(line, Color.white);
             }
-            
-            beatTimelineTexture.Apply();
-            
-            return beatTimelineTexture;
+
+            Rect dividerLine = new Rect(rect.x, rect.y + rect.height - 3, width, 3);
+            EditorGUI.DrawRect(dividerLine, Color.white);
         }
         
-        public static Texture2D GenerateTimeline(Song song, Rect rect, float scrollX, float zoom, out Texture2D timestampsTexture)
+        public static void DrawTimeline(Song song, Rect rect, float scrollX, float zoom)
         {
-            RebuildSpriteDictionary();
-            
-            Texture2D timelineTexture = new Texture2D((int) rect.width, 32);
-
-            // Fill timeline background
-            Color[] pixels = new Color[timelineTexture.width * timelineTexture.height];
-            for (int i = 0; i < pixels.Length; i++)
-            {
-                pixels[i] = Color.black;
-            }
-            timelineTexture.SetPixels(pixels);
+            EditorGUI.DrawRect(rect, Color.black);
             
             // Fill timestamp background
-            TIMESTAMPS_TEXTURE = new((int) rect.width, TEXT_SPRITE_HEIGHT);
-            pixels = new Color[TIMESTAMPS_TEXTURE.width * TIMESTAMPS_TEXTURE.height];
-            for (int i = 0; i < pixels.Length; i++)
-            {
-                pixels[i] = Color.gray1;
-            }
-            TIMESTAMPS_TEXTURE.SetPixels(pixels);
+            Rect timestampRect = new Rect(rect.x, rect.y, rect.width, FONT_HEIGHT);
+            EditorGUI.DrawRect(timestampRect, Color.black);
             
             float songLength = song.Clip.length;
             
             float startTime = songLength * scrollX;
             float endTime = startTime + songLength * zoom;
-
+        
             // Total widths
             int width = Mathf.FloorToInt(rect.width);
-
-            var stepPositions = TimelineUtils.GetAllPositions(x => (float) x / (STEPS_BETWEEN_SECONDS + 1),
-                songLength * (STEPS_BETWEEN_SECONDS + 1), startTime, endTime, width,
-                1, out _);
-            foreach (var x in stepPositions)
-            {
-                for (int y = 10; y < timelineTexture.height; y++)
-                {
-                    timelineTexture.SetPixel(x, y, Color.gray3);
-                }
-            }
             
             var secondPositions = TimelineUtils.GetAllPositions(x => x, songLength, startTime, endTime, width, 
-                MINIMUM_SECOND_DISTANCE, out var times);
+                MINIMUM_SECOND_DISTANCE, out var times, out _);
             for (int i = 0; i < secondPositions.Count; i++)
             {
                 int x = secondPositions[i];
                 int time = Mathf.FloorToInt(times[i]);
                 
-                for (int y = 0; y < timelineTexture.height; y++)
-                {
-                    timelineTexture.SetPixel(x, y, Color.gray3);
-                }
+                Rect line = new Rect(rect.x + x, rect.y, 1, rect.height);
+                EditorGUI.DrawRect(line, Color.gray3);
                 
-                AddTimestamp(time, x);
+                AddTimestamp(rect, time, x);
             }
             
-            timelineTexture.Apply();
-
-            timestampsTexture = TIMESTAMPS_TEXTURE;
-            return timelineTexture;
+            // var stepPositions = TimelineUtils.GetAllPositions(x => (float) x / (STEPS_BETWEEN_SECONDS + 1),
+            //     secondPositions.Count * (STEPS_BETWEEN_SECONDS + 1), startTime, endTime, width,
+            //     1, out _, out _);
+            // foreach (var x in stepPositions)
+            // {
+            //     for (int y = 10; y < timelineTexture.height; y++)
+            //     {
+            //         timelineTexture.SetPixel(x, y, Color.gray3);
+            //     }
+            // }
         }
-
-        private static void AddTimestamp(int timeInSeconds, int xPos)
+        
+        private static void AddTimestamp(Rect rect, int timeInSeconds, int xPos)
         {
             int minutes = timeInSeconds / 60;
             int seconds = timeInSeconds % 60;
-
+        
             string timeText = $"{minutes}:{seconds:00}";
+
+            int width = timeText.Length * FONT_WIDTH;
+            int halfWidth = width / 2;
+            int startX = Mathf.Clamp(xPos - halfWidth, 0, (int) rect.width - width);
             
-            Sprite[] sprites = new Sprite[timeText.Length];
-            int totalWidth = 0;
+            Rect labelRect = new Rect(rect.x + startX, rect.y, width, FONT_HEIGHT);
             
-            // Sprites and width from text
-            for (int i = 0; i < timeText.Length; i++)
-            {
-                string s = timeText[i].ToString();
-                s = s == ":" ? "colon" : s;
-                
-                if (!TEXT_SPRITES.TryGetValue(s, out var sprite))
-                {
-                    Debug.LogError("Could not find sprite for " + s);
-                    return;
-                }
-                
-                sprites[i] = sprite;
-                totalWidth += sprite.texture.width;
-            }
-
-            int halfWidth = totalWidth / 2;
-            int startX = Mathf.Clamp(xPos - halfWidth, 0, TIMESTAMPS_TEXTURE.width - totalWidth);
-            
-            // Combine sprites into one texture
-            foreach (var sprite in sprites)
-            {
-                var texture = sprite.texture;
-                int width = texture.width;
-                var pixels = sprite.texture.GetPixels();
-
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < TEXT_SPRITE_HEIGHT; y++)
-                    {
-                        int index = x + y * width;
-                        int finalXPos = startX + x;
-                        
-                        var pixel = pixels[index];
-                        var backgroundPixel = TIMESTAMPS_TEXTURE.GetPixel(finalXPos, y);
-                        
-                        // Alpha influence to allow background to shine through
-                        var pixelBlend = pixel.a * pixel + (1 - pixel.a) * backgroundPixel;
-                        
-                        TIMESTAMPS_TEXTURE.SetPixel(finalXPos, y, pixelBlend);
-                    }
-                }
-                
-                startX += width;
-            }
-
-            TIMESTAMPS_TEXTURE.Apply();
-        }
-
-        // Find all text sprites from the resources folder
-        private static void RebuildSpriteDictionary()
-        {
-            TEXT_SPRITES.Clear();
-            
-            var sprites = Resources.LoadAll<Sprite>("Text Sprites");
-
-            foreach (var sprite in sprites)
-                TEXT_SPRITES.Add(sprite.name, sprite);
+            EditorGUI.LabelField(labelRect, timeText);
         }
     }
 }
