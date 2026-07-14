@@ -19,8 +19,6 @@ namespace Editor
         private VisualElement _timelineView;
         private ListView _songListView;
 
-        private Texture2D _beatTimelineTexture;
-        
         private float _zoom = 1f;
         private float _scrollX;
 
@@ -170,6 +168,8 @@ namespace Editor
 
             const int noteSize = 16;
             const int halfNoteSize = noteSize / 2;
+
+            var beatTimelineRect = new Rect(rect.x, rect.y, rect.width, 300);
             
             foreach (var note in _song.Notes.Where(n => n.Time >= startTime && n.Time < endTime))
             {
@@ -179,7 +179,7 @@ namespace Editor
                     continue;
 
                 int y = note.Lane;
-                int yPos = _beatTimelineTexture.height * (y + 1) / (numInputs + 1) + y / numInputs - halfNoteSize;
+                int yPos = (int) beatTimelineRect.height * (y + 1) / (numInputs + 1) + y / numInputs - halfNoteSize;
 
                 var color = y switch
                 {

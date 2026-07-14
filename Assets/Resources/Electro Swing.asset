@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Electro Swing
   m_EditorClassIdentifier: IJustGotASmithy.ScriptableObjects::ScriptableObjects.Song
   Clip: {fileID: 8300000, guid: a995a6fc20aa69a40a72aec1185b5348, type: 3}
-  BPM: 120
+  BPM: 112
   Notes: []
