@@ -12,6 +12,338 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d65ac9b29d91453dbf40f7c21e189d33, type: 3}
   m_Name: Electro Swing
   m_EditorClassIdentifier: IJustGotASmithy.ScriptableObjects::ScriptableObjects.Song
-  Clip: {fileID: 8300000, guid: a995a6fc20aa69a40a72aec1185b5348, type: 3}
+  Clip: {fileID: 8300000, guid: e48a7865dbdd71745ac5362fab48dc63, type: 3}
   BPM: 112
-  Notes: []
+  Notes:
+  - Time: 4.419643
+    Lane: 2
+  - Time: 4.955357
+    Lane: 2
+  - Time: 5.491071
+    Lane: 2
+  - Time: 5.892857
+    Lane: 2
+  - Time: 6.294643
+    Lane: 2
+  - Time: 6.5625
+    Lane: 2
+  - Time: 7.098214
+    Lane: 2
+  - Time: 7.633929
+    Lane: 2
+  - Time: 8.035714
+    Lane: 2
+  - Time: 8.4375
+    Lane: 2
+  - Time: 8.705358
+    Lane: 2
+  - Time: 9.241072
+    Lane: 2
+  - Time: 9.776786
+    Lane: 2
+  - Time: 10.178572
+    Lane: 2
+  - Time: 10.848214
+    Lane: 2
+  - Time: 11.383928
+    Lane: 2
+  - Time: 11.919642
+    Lane: 2
+  - Time: 12.321428
+    Lane: 2
+  - Time: 12.991072
+    Lane: 2
+  - Time: 13.526786
+    Lane: 2
+  - Time: 14.0625
+    Lane: 2
+  - Time: 14.464286
+    Lane: 2
+  - Time: 14.866072
+    Lane: 2
+  - Time: 15.133928
+    Lane: 2
+  - Time: 15.669642
+    Lane: 2
+  - Time: 16.205357
+    Lane: 2
+  - Time: 16.607143
+    Lane: 2
+  - Time: 17.008928
+    Lane: 2
+  - Time: 17.276785
+    Lane: 2
+  - Time: 17.8125
+    Lane: 2
+  - Time: 18.348215
+    Lane: 2
+  - Time: 18.75
+    Lane: 2
+  - Time: 19.419643
+    Lane: 2
+  - Time: 19.955357
+    Lane: 2
+  - Time: 20.491072
+    Lane: 2
+  - Time: 20.892857
+    Lane: 2
+  - Time: 21.5625
+    Lane: 2
+  - Time: 22.098215
+    Lane: 2
+  - Time: 22.633928
+    Lane: 2
+  - Time: 23.035715
+    Lane: 2
+  - Time: 23.4375
+    Lane: 2
+  - Time: 23.705357
+    Lane: 2
+  - Time: 24.241072
+    Lane: 2
+  - Time: 24.776785
+    Lane: 2
+  - Time: 25.178572
+    Lane: 2
+  - Time: 25.580357
+    Lane: 2
+  - Time: 25.848215
+    Lane: 2
+  - Time: 26.383928
+    Lane: 2
+  - Time: 26.919643
+    Lane: 2
+  - Time: 27.321428
+    Lane: 2
+  - Time: 27.991072
+    Lane: 2
+  - Time: 28.526785
+    Lane: 2
+  - Time: 29.0625
+    Lane: 2
+  - Time: 29.464285
+    Lane: 2
+  - Time: 12.991072
+    Lane: 3
+  - Time: 2.2767856
+    Lane: 0
+  - Time: 2.544643
+    Lane: 1
+  - Time: 2.8125
+    Lane: 0
+  - Time: 3.3482144
+    Lane: 0
+  - Time: 3.75
+    Lane: 0
+  - Time: 4.151786
+    Lane: 0
+  - Time: 4.419643
+    Lane: 0
+  - Time: 4.955357
+    Lane: 0
+  - Time: 5.491071
+    Lane: 0
+  - Time: 5.892857
+    Lane: 0
+  - Time: 6.294643
+    Lane: 0
+  - Time: 6.5625
+    Lane: 0
+  - Time: 7.098214
+    Lane: 0
+  - Time: 7.633929
+    Lane: 0
+  - Time: 8.035714
+    Lane: 0
+  - Time: 8.705358
+    Lane: 0
+  - Time: 9.241072
+    Lane: 0
+  - Time: 9.776786
+    Lane: 0
+  - Time: 10.3125
+    Lane: 0
+  - Time: 10.848214
+    Lane: 0
+  - Time: 11.383928
+    Lane: 0
+  - Time: 11.919642
+    Lane: 0
+  - Time: 12.455358
+    Lane: 0
+  - Time: 3.080357
+    Lane: 1
+  - Time: 3.6160715
+    Lane: 1
+  - Time: 4.151786
+    Lane: 1
+  - Time: 4.6875
+    Lane: 1
+  - Time: 5.223214
+    Lane: 1
+  - Time: 5.758929
+    Lane: 1
+  - Time: 6.294643
+    Lane: 1
+  - Time: 6.830357
+    Lane: 1
+  - Time: 7.366071
+    Lane: 1
+  - Time: 7.901786
+    Lane: 1
+  - Time: 8.4375
+    Lane: 1
+  - Time: 8.973214
+    Lane: 1
+  - Time: 9.508928
+    Lane: 1
+  - Time: 10.044642
+    Lane: 1
+  - Time: 10.580358
+    Lane: 1
+  - Time: 11.116072
+    Lane: 1
+  - Time: 11.651786
+    Lane: 1
+  - Time: 12.1875
+    Lane: 1
+  - Time: 13.526786
+    Lane: 3
+  - Time: 13.928572
+    Lane: 1
+  - Time: 13.258928
+    Lane: 0
+  - Time: 13.526786
+    Lane: 0
+  - Time: 13.928572
+    Lane: 0
+  - Time: 14.330358
+    Lane: 0
+  - Time: 14.866072
+    Lane: 1
+  - Time: 15
+    Lane: 0
+  - Time: 14.866072
+    Lane: 3
+  - Time: 15.133928
+    Lane: 3
+  - Time: 15.669642
+    Lane: 1
+  - Time: 16.205357
+    Lane: 1
+  - Time: 16.205357
+    Lane: 0
+  - Time: 16.607143
+    Lane: 3
+  - Time: 16.607143
+    Lane: 1
+  - Time: 17.8125
+    Lane: 1
+  - Time: 18.080357
+    Lane: 3
+  - Time: 18.348215
+    Lane: 1
+  - Time: 15.669642
+    Lane: 0
+  - Time: 16.607143
+    Lane: 0
+  - Time: 18.616072
+    Lane: 3
+  - Time: 18.75
+    Lane: 1
+  - Time: 19.151785
+    Lane: 1
+  - Time: 19.419643
+    Lane: 3
+  - Time: 19.955357
+    Lane: 3
+  - Time: 20.089285
+    Lane: 1
+  - Time: 20.491072
+    Lane: 1
+  - Time: 20.491072
+    Lane: 3
+  - Time: 20.892857
+    Lane: 0
+  - Time: 20.892857
+    Lane: 1
+  - Time: 20.892857
+    Lane: 3
+  - Time: 21.5625
+    Lane: 3
+  - Time: 22.098215
+    Lane: 3
+  - Time: 23.4375
+    Lane: 3
+  - Time: 23.705357
+    Lane: 3
+  - Time: 25.178572
+    Lane: 3
+  - Time: 26.651785
+    Lane: 3
+  - Time: 27.1875
+    Lane: 3
+  - Time: 27.991072
+    Lane: 3
+  - Time: 28.526785
+    Lane: 3
+  - Time: 29.0625
+    Lane: 3
+  - Time: 29.464285
+    Lane: 3
+  - Time: 22.5
+    Lane: 1
+  - Time: 23.4375
+    Lane: 1
+  - Time: 24.241072
+    Lane: 1
+  - Time: 24.776785
+    Lane: 1
+  - Time: 25.178572
+    Lane: 1
+  - Time: 26.383928
+    Lane: 1
+  - Time: 26.919643
+    Lane: 1
+  - Time: 27.321428
+    Lane: 1
+  - Time: 27.723215
+    Lane: 1
+  - Time: 28.660715
+    Lane: 1
+  - Time: 29.0625
+    Lane: 1
+  - Time: 29.464285
+    Lane: 1
+  - Time: 29.464285
+    Lane: 0
+  - Time: 21.830357
+    Lane: 0
+  - Time: 22.098215
+    Lane: 0
+  - Time: 22.5
+    Lane: 0
+  - Time: 22.901785
+    Lane: 0
+  - Time: 23.571428
+    Lane: 0
+  - Time: 24.241072
+    Lane: 0
+  - Time: 24.776785
+    Lane: 0
+  - Time: 25.178572
+    Lane: 0
+  - Time: 19.821428
+    Lane: 0
+  - Time: 20.357143
+    Lane: 0
+  - Time: 26.25
+    Lane: 0
+  - Time: 26.785715
+    Lane: 0
+  - Time: 27.321428
+    Lane: 0
+  - Time: 28.392857
+    Lane: 0
+  - Time: 28.928572
+    Lane: 0
