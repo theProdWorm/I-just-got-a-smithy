@@ -241,50 +241,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UIelements_atlas_3
-      rect:
-        serializedVersion: 2
-        x: 743
-        y: 470
-        width: 217
-        height: 214
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: fbf591975d76d8a80800000000000000
-      internalID: -8462993958201892929
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UIelements_atlas_7
-      rect:
-        serializedVersion: 2
-        x: 966
-        y: 469
-        width: 219
-        height: 214
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a86ce374497c6ff10800000000000000
-      internalID: 2303247699110971018
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: UIelements_atlas_13
       rect:
         serializedVersion: 2
@@ -335,7 +291,7 @@ TextureImporter:
         x: 511
         y: 298
         width: 177
-        height: 156
+        height: 158
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -357,7 +313,7 @@ TextureImporter:
         x: 705
         y: 298
         width: 188
-        height: 155
+        height: 158
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -398,10 +354,10 @@ TextureImporter:
       name: UIelements_atlas_22
       rect:
         serializedVersion: 2
-        x: 1095
+        x: 1091
         y: 298
-        width: 177
-        height: 155
+        width: 181
+        height: 158
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -421,9 +377,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 279
-        width: 509
-        height: 157
+        y: 278
+        width: 511
+        height: 156
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -460,11 +416,55 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIelements_atlas_26
+      rect:
+        serializedVersion: 2
+        x: 745
+        y: 469
+        width: 218
+        height: 219
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 119ded7c173f4e14cbb46a718614f299
+      internalID: 644617448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIelements_atlas_27
+      rect:
+        serializedVersion: 2
+        x: 971
+        y: 469
+        width: 217
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31f9e5d8276e07349b89d00d785658f5
+      internalID: 2080405151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 0d3a8058a40ef4a48bd44af9b497149f
+    spriteID: 854b42b7afa673d4ea381001fff7855e
     internalID: 0
     vertices: []
     indices: 
@@ -493,6 +493,8 @@ TextureImporter:
       UIelements_atlas_23: 2528529342710250486
       UIelements_atlas_24: -7617726076745945496
       UIelements_atlas_25: 7116347989340432190
+      UIelements_atlas_26: 644617448
+      UIelements_atlas_27: 2080405151
       UIelements_atlas_3: -8462993958201892929
       UIelements_atlas_4: -9075509605653833904
       UIelements_atlas_5: 7237983341002040090
