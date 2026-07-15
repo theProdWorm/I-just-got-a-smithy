@@ -430,8 +430,6 @@ namespace Editor
         
         private void OnSongSelectionChange(IEnumerable<object> selectedItems)
         {
-            _timelineView.hierarchy.Clear();
-            
             _zoom = 1;
             ScrollX = 0;
             

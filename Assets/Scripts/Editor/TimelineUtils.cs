@@ -9,7 +9,7 @@ namespace Editor
     public static class TimelineUtils
     {
         public const int MINIMUM_BEAT_DISTANCE = 20;
-        public const int PARTS_PER_BEAT = 16;
+        public const int PARTS_PER_BEAT = 4;
         public const int NUM_INPUTS = 4;
         
         public static int GetXPosition(float time, float startTime, float endTime, int width)
