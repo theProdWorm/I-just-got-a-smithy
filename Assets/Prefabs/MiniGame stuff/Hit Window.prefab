@@ -234,3 +234,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   circleCollider2D: {fileID: 5843545668058650775}
+  lane: 0

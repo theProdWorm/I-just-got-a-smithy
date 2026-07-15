@@ -28,6 +28,11 @@ public class Player : MonoBehaviour
         _audioSource.Play();
     }
 
+    public Song ReturnSong()
+    {
+        return _currentSong;
+    }
+
     // Update is called once per frame
     void Update()
     {

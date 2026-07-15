@@ -128,33 +128,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 122982050}
-  - component: {fileID: 122982049}
+  - component: {fileID: 122982051}
   m_Layer: 0
-  m_Name: RandomSpawner
+  m_Name: NoteSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &122982049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 122982048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54de35b40035dd6418f0f11f517b8861, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: IJustGotASmithy.Runtime::RandomNoteSpawner
-  notePrefab: {fileID: 1712318226491311705, guid: e1d3c5bdea6ba7e4fa7deecf387db034, type: 3}
-  hitWindows: []
-  splines:
-  - {fileID: 1642229718}
-  - {fileID: 322326608}
-  - {fileID: 250250730}
-  - {fileID: 540093643}
 --- !u!4 &122982050
 Transform:
   m_ObjectHideFlags: 0
@@ -170,6 +151,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &122982051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 122982048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4b123a597b36e740897c10f0f8a27c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IJustGotASmithy.Runtime::NoteSpawner
+  notePrefab: {fileID: 1712318226491311705, guid: e1d3c5bdea6ba7e4fa7deecf387db034, type: 3}
+  hitWindows: []
+  splines:
+  - {fileID: 1642229718}
+  - {fileID: 322326608}
+  - {fileID: 250250730}
+  - {fileID: 540093643}
+  songPlayer: {fileID: 1087775300}
+  timeToSpawnNote: 1.5
 --- !u!114 &250250730 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5031231068945352067, guid: 276e2db755b854c4087ca3900707186f, type: 3}
@@ -211,7 +213,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalScale.y
-      value: 11.94
+      value: 9.999463
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -219,7 +221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 3.5000002
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -304,7 +306,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalScale.y
-      value: 11.94
+      value: 9.999463
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -312,7 +314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 3.5000002
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -431,7 +433,7 @@ Transform:
   m_GameObject: {fileID: 566531541}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.5, z: 0}
+  m_LocalPosition: {x: 0, y: -3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -470,7 +472,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.037
+  m_Volume: 0.164
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -566,7 +568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b710c177d0e8f648aa6aa0083d6f4f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: IJustGotASmithy.ScriptableObjects::Player
-  _currentSong: {fileID: 11400000, guid: 27e319e2a633d164db50b8f2fba14c8b, type: 2}
+  _currentSong: {fileID: 11400000, guid: 17973e86885a02543ae482ffcce50443, type: 2}
 --- !u!4 &1087775301
 Transform:
   m_ObjectHideFlags: 0
@@ -708,7 +710,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalScale.y
-      value: 11.94
+      value: 9.999463
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -716,7 +718,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 3.5000002
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1399,7 +1401,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalScale.y
-      value: 11.94
+      value: 9.999463
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1407,7 +1409,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 3.5000002
       objectReference: {fileID: 0}
     - target: {fileID: 4675229870914242910, guid: 276e2db755b854c4087ca3900707186f, type: 3}
       propertyPath: m_LocalPosition.z

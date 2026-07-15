@@ -108,6 +108,7 @@ MonoBehaviour:
   spline:
     nodes: []
     tension: 0.5
+  lane: 0
   splineAnimate: {fileID: 8677405598131583732}
 --- !u!114 &8677405598131583732
 MonoBehaviour:
@@ -124,8 +125,8 @@ MonoBehaviour:
   m_Target: {fileID: 0}
   m_PlayOnAwake: 1
   m_LoopMode: 1
-  m_Method: 1
-  m_Duration: 1.5
+  m_Method: 0
+  m_Duration: 1
   m_MaxSpeed: 10
   m_EasingMode: 0
   m_AlignmentMode: 2

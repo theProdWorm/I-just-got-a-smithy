@@ -15,7 +15,7 @@ public class HitNote : MonoBehaviour
     {
         Player player=FindAnyObjectByType<Player>();
         travelSpeed = player.TimelineSpeed;
-        Debug.Log(travelSpeed);
+        // Debug.Log(travelSpeed);
         splineAnimate=GetComponent<SplineAnimate>();
 
         splineAnimate.Completed += WhenDone;
