@@ -568,7 +568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b710c177d0e8f648aa6aa0083d6f4f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: IJustGotASmithy.ScriptableObjects::Player
-  _currentSong: {fileID: 11400000, guid: 17973e86885a02543ae482ffcce50443, type: 2}
+  _currentSong: {fileID: 11400000, guid: 27e319e2a633d164db50b8f2fba14c8b, type: 2}
 --- !u!4 &1087775301
 Transform:
   m_ObjectHideFlags: 0

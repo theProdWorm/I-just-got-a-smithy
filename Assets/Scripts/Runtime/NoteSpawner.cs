@@ -9,6 +9,7 @@ public class NoteSpawner : MonoBehaviour
     public List<HitWindow> hitWindows=new List<HitWindow>();
     public List<SplineContainer> splines=new List<SplineContainer>();
     private float songTimer;
+    private float timerToStartSong;
     [SerializeField] private Player songPlayer;
     private Song _currentSong;
 
