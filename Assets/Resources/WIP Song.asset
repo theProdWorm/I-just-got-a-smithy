@@ -14,4 +14,170 @@ MonoBehaviour:
   m_EditorClassIdentifier: IJustGotASmithy.ScriptableObjects::ScriptableObjects.Song
   Clip: {fileID: 8300000, guid: ac4c4d401fc5e674bba41a533574f3cb, type: 3}
   BPM: 84
-  Notes: []
+  Notes:
+  - Time: 0.35714287
+    Lane: 3
+  - Time: 0.53571427
+    Lane: 3
+  - Time: 0.71428573
+    Lane: 2
+  - Time: 0.89285713
+    Lane: 0
+  - Time: 1.4285715
+    Lane: 1
+  - Time: 2.142857
+    Lane: 2
+  - Time: 2.857143
+    Lane: 0
+  - Time: 4.821429
+    Lane: 1
+  - Time: 4.821429
+    Lane: 0
+  - Time: 4.821429
+    Lane: 2
+  - Time: 4.821429
+    Lane: 3
+  - Time: 5.357143
+    Lane: 3
+  - Time: 5.714286
+    Lane: 3
+  - Time: 6.071429
+    Lane: 2
+  - Time: 6.25
+    Lane: 3
+  - Time: 6.607143
+    Lane: 3
+  - Time: 6.964286
+    Lane: 3
+  - Time: 7.321429
+    Lane: 3
+  - Time: 7.6785717
+    Lane: 2
+  - Time: 8.214286
+    Lane: 3
+  - Time: 8.571428
+    Lane: 3
+  - Time: 8.928572
+    Lane: 1
+  - Time: 9.107143
+    Lane: 1
+  - Time: 9.285714
+    Lane: 2
+  - Time: 9.464286
+    Lane: 0
+  - Time: 9.464286
+    Lane: 2
+  - Time: 9.821428
+    Lane: 0
+  - Time: 10
+    Lane: 1
+  - Time: 10.535714
+    Lane: 3
+  - Time: 10.535714
+    Lane: 2
+  - Time: 11.071428
+    Lane: 3
+  - Time: 11.428572
+    Lane: 1
+  - Time: 11.785714
+    Lane: 3
+  - Time: 11.964286
+    Lane: 3
+  - Time: 12.142858
+    Lane: 2
+  - Time: 12.5
+    Lane: 3
+  - Time: 12.678572
+    Lane: 3
+  - Time: 13.035714
+    Lane: 0
+  - Time: 13.75
+    Lane: 1
+  - Time: 13.75
+    Lane: 0
+  - Time: 14.464286
+    Lane: 0
+  - Time: 14.464286
+    Lane: 2
+  - Time: 14.464286
+    Lane: 1
+  - Time: 15.178572
+    Lane: 0
+  - Time: 15.178572
+    Lane: 2
+  - Time: 15.178572
+    Lane: 1
+  - Time: 15.178572
+    Lane: 3
+  - Time: 16.25
+    Lane: 2
+  - Time: 16.25
+    Lane: 0
+  - Time: 16.25
+    Lane: 3
+  - Time: 16.25
+    Lane: 1
+  - Time: 20.535715
+    Lane: 0
+  - Time: 20.535715
+    Lane: 2
+  - Time: 20.714287
+    Lane: 1
+  - Time: 20.714287
+    Lane: 3
+  - Time: 20.892857
+    Lane: 0
+  - Time: 20.892857
+    Lane: 2
+  - Time: 21.964287
+    Lane: 0
+  - Time: 21.964287
+    Lane: 1
+  - Time: 22.321428
+    Lane: 0
+  - Time: 22.5
+    Lane: 1
+  - Time: 22.678572
+    Lane: 2
+  - Time: 22.857143
+    Lane: 2
+  - Time: 22.857143
+    Lane: 3
+  - Time: 23.035715
+    Lane: 1
+  - Time: 23.035715
+    Lane: 2
+  - Time: 23.392857
+    Lane: 0
+  - Time: 23.392857
+    Lane: 1
+  - Time: 23.75
+    Lane: 0
+  - Time: 23.75
+    Lane: 2
+  - Time: 24.285715
+    Lane: 2
+  - Time: 24.642859
+    Lane: 0
+  - Time: 25.178572
+    Lane: 3
+  - Time: 25.357143
+    Lane: 2
+  - Time: 25.535715
+    Lane: 3
+  - Time: 25.714287
+    Lane: 2
+  - Time: 26.071428
+    Lane: 2
+  - Time: 26.428572
+    Lane: 0
+  - Time: 26.785715
+    Lane: 1
+  - Time: 27.142859
+    Lane: 2
+  - Time: 27.678572
+    Lane: 3
+  - Time: 27.678572
+    Lane: 1
+  - Time: 27.678572
+    Lane: 2
