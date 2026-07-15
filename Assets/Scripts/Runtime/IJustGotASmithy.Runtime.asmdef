@@ -1,7 +1,11 @@
 {
     "name": "IJustGotASmithy.Runtime",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "Unity.InputSystem",
+        "IJustGotASmithy.ScriptableObjects",
+        "Unity.Splines"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
