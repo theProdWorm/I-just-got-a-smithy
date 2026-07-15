@@ -398,6 +398,7 @@ namespace Editor
             }
             
             _song.Notes.Sort((n1, n2) => n1.Time.CompareTo(n2.Time));
+            EditorUtility.SetDirty(_song);
         }
 
         private void MoveHeldNote(MouseMoveEvent e)
@@ -417,6 +418,7 @@ namespace Editor
             _heldNote.Lane = lane;
             
             _song.Notes.Sort((n1, n2) => n1.Time.CompareTo(n2.Time));
+            EditorUtility.SetDirty(_song);
         }
 
         private void GetNotePosition(Vector2 mousePosition, Rect beatTimelineRect, out float beatTime, out int lane)
