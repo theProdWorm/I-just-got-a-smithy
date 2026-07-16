@@ -34,9 +34,9 @@ MonoBehaviour:
   - Time: 4.151786
     Lane: 0
   - Time: 4.419643
-    Lane: 0
-  - Time: 4.419643
     Lane: 2
+  - Time: 4.419643
+    Lane: 0
   - Time: 4.6875
     Lane: 1
   - Time: 4.955357
@@ -46,9 +46,9 @@ MonoBehaviour:
   - Time: 5.223214
     Lane: 1
   - Time: 5.491071
-    Lane: 0
-  - Time: 5.491071
     Lane: 2
+  - Time: 5.491071
+    Lane: 0
   - Time: 5.758929
     Lane: 1
   - Time: 5.892857
@@ -56,11 +56,11 @@ MonoBehaviour:
   - Time: 5.892857
     Lane: 0
   - Time: 6.294643
-    Lane: 1
-  - Time: 6.294643
     Lane: 0
   - Time: 6.294643
     Lane: 2
+  - Time: 6.294643
+    Lane: 1
   - Time: 6.5625
     Lane: 0
   - Time: 6.5625
@@ -74,15 +74,15 @@ MonoBehaviour:
   - Time: 7.366071
     Lane: 1
   - Time: 7.633929
-    Lane: 2
-  - Time: 7.633929
     Lane: 0
+  - Time: 7.633929
+    Lane: 2
   - Time: 7.901786
     Lane: 1
   - Time: 8.035714
-    Lane: 0
-  - Time: 8.035714
     Lane: 2
+  - Time: 8.035714
+    Lane: 0
   - Time: 8.4375
     Lane: 1
   - Time: 8.4375
@@ -112,9 +112,9 @@ MonoBehaviour:
   - Time: 10.580358
     Lane: 1
   - Time: 10.848214
-    Lane: 2
-  - Time: 10.848214
     Lane: 0
+  - Time: 10.848214
+    Lane: 2
   - Time: 11.116072
     Lane: 1
   - Time: 11.383928
@@ -146,9 +146,9 @@ MonoBehaviour:
   - Time: 13.526786
     Lane: 3
   - Time: 13.928572
-    Lane: 1
-  - Time: 13.928572
     Lane: 0
+  - Time: 13.928572
+    Lane: 1
   - Time: 14.0625
     Lane: 2
   - Time: 14.330358
@@ -164,29 +164,29 @@ MonoBehaviour:
   - Time: 15
     Lane: 0
   - Time: 15.133928
-    Lane: 2
+    Lane: 3
   - Time: 15.133928
+    Lane: 2
+  - Time: 15.669642
+    Lane: 1
+  - Time: 15.669642
+    Lane: 0
+  - Time: 15.669642
+    Lane: 2
+  - Time: 16.205357
+    Lane: 1
+  - Time: 16.205357
+    Lane: 0
+  - Time: 16.205357
+    Lane: 2
+  - Time: 16.607143
+    Lane: 2
+  - Time: 16.607143
+    Lane: 1
+  - Time: 16.607143
     Lane: 3
-  - Time: 15.669642
-    Lane: 1
-  - Time: 15.669642
-    Lane: 0
-  - Time: 15.669642
-    Lane: 2
-  - Time: 16.205357
-    Lane: 1
-  - Time: 16.205357
-    Lane: 0
-  - Time: 16.205357
-    Lane: 2
-  - Time: 16.607143
-    Lane: 3
-  - Time: 16.607143
-    Lane: 2
   - Time: 16.607143
     Lane: 0
-  - Time: 16.607143
-    Lane: 1
   - Time: 17.008928
     Lane: 2
   - Time: 17.276785
@@ -224,19 +224,19 @@ MonoBehaviour:
   - Time: 20.357143
     Lane: 0
   - Time: 20.491072
-    Lane: 2
+    Lane: 3
   - Time: 20.491072
     Lane: 1
   - Time: 20.491072
-    Lane: 3
-  - Time: 20.892857
     Lane: 2
   - Time: 20.892857
-    Lane: 3
+    Lane: 1
+  - Time: 20.892857
+    Lane: 2
   - Time: 20.892857
     Lane: 0
   - Time: 20.892857
-    Lane: 1
+    Lane: 3
   - Time: 21.5625
     Lane: 3
   - Time: 21.5625
@@ -260,23 +260,23 @@ MonoBehaviour:
   - Time: 23.035715
     Lane: 2
   - Time: 23.4375
+    Lane: 2
+  - Time: 23.4375
     Lane: 1
   - Time: 23.4375
     Lane: 3
-  - Time: 23.4375
-    Lane: 2
   - Time: 23.571428
     Lane: 0
   - Time: 23.705357
-    Lane: 3
+    Lane: 2
   - Time: 23.705357
-    Lane: 2
-  - Time: 24.241072
-    Lane: 1
+    Lane: 3
   - Time: 24.241072
     Lane: 2
   - Time: 24.241072
     Lane: 0
+  - Time: 24.241072
+    Lane: 1
   - Time: 24.776785
     Lane: 1
   - Time: 24.776785
@@ -286,11 +286,11 @@ MonoBehaviour:
   - Time: 25.178572
     Lane: 3
   - Time: 25.178572
-    Lane: 2
+    Lane: 0
   - Time: 25.178572
     Lane: 1
   - Time: 25.178572
-    Lane: 0
+    Lane: 2
   - Time: 25.580357
     Lane: 2
   - Time: 25.848215
@@ -306,9 +306,9 @@ MonoBehaviour:
   - Time: 26.785715
     Lane: 0
   - Time: 26.919643
-    Lane: 1
-  - Time: 26.919643
     Lane: 2
+  - Time: 26.919643
+    Lane: 1
   - Time: 27.1875
     Lane: 3
   - Time: 27.321428
@@ -326,9 +326,9 @@ MonoBehaviour:
   - Time: 28.392857
     Lane: 0
   - Time: 28.526785
-    Lane: 2
-  - Time: 28.526785
     Lane: 3
+  - Time: 28.526785
+    Lane: 2
   - Time: 28.660715
     Lane: 1
   - Time: 28.928572

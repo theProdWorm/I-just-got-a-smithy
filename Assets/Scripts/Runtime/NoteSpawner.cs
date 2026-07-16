@@ -43,7 +43,7 @@ public class NoteSpawner : MonoBehaviour
     void Update()
     {
         songTimer += Time.deltaTime;
-        if (_noteList[noteIndex].Time-songTimer <timeToSpawnNote)
+        while (noteIndex < _noteList.Count && _noteList[noteIndex].Time - songTimer < timeToSpawnNote)
         {
             CreateNewNote(_noteList[noteIndex]);
             noteIndex++;
